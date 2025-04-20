@@ -1,35 +1,29 @@
-from app.extensions import db
+# app/models.py
+from .extensions import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    cliente = db.Column(db.String(100), nullable=False)
-    empresa = db.Column(db.String(100), nullable=False)
-    endereco = db.Column(db.String(200))
+    tipo_pessoa = db.Column(db.String(10), nullable=False)  # 'fisica' ou 'juridica'
+    nome = db.Column(db.String(120), nullable=False)
     telefone = db.Column(db.String(20))
-    email = db.Column(db.String(120))
-    redesocial = db.Column(db.String(100))
-    informacoes = db.Column(db.Text)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    senha_hash = db.Column(db.String(128), nullable=False)
+    cpf = db.Column(db.String(14), unique=True)
+    cnpj = db.Column(db.String(18), unique=True)
+    razao_social = db.Column(db.String(120))
+    cep = db.Column(db.String(9))
+    rua = db.Column(db.String(100))
+    numero = db.Column(db.String(10))
+    bairro = db.Column(db.String(60))
+    cidade = db.Column(db.String(60))
+
+    def set_senha(self, senha):
+        self.senha_hash = generate_password_hash(senha)
+
+    def check_senha(self, senha):
+        return check_password_hash(self.senha_hash, senha)
 
     def __repr__(self):
-        return f"<Cliente {self.cliente}>"
-
-
-class Budget(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    empresa = db.Column(db.String(255), nullable=False)
-    cliente = db.Column(db.String(255), nullable=False)
-    data = db.Column(db.Date, nullable=False)
-    validade = db.Column(db.String(255))
-    nome_projeto = db.Column(db.String(255))
-    descricao = db.Column(db.Text)
-    orcados = db.Column(db.Text)
-    total = db.Column(db.Text)
-    prazo = db.Column(db.String(255))
-    frete = db.Column(db.Text)
-    observacao = db.Column(db.Text)
-    cnpj = db.Column(db.String(255))
-    pagamento = db.Column(db.Text)
-
-    def __repr__(self):
-        return f"<Budget {self.nome_projeto}>"  # Correção aqui
+        return f"<Cliente {self.nome} ({self.tipo_pessoa})>"
