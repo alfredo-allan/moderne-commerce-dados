@@ -2,10 +2,11 @@ from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
 from app.extensions import db
-from app.models import Cliente, ShippingCalculation
+from app.models import Cliente, ShippingCalculation, Order
 from app.routes.clients import clients_bp
 from app.routes.shipping import shipping_bp
 from app.routes.payment import payment_bp
+from app.routes.orders import orders_bp
 from .config import Config  # ou DevelopmentConfig
 from dotenv import load_dotenv
 
@@ -40,5 +41,6 @@ with app.app_context():
 # Registro dos blueprints
 app.register_blueprint(clients_bp)
 app.register_blueprint(shipping_bp)
-print("✅ Blueprint 'shipping_bp' registrado com CORS ativo")
 app.register_blueprint(payment_bp)
+app.register_blueprint(orders_bp)
+print("✅ Blueprint 'shipping_bp' registrado com CORS ativo")
