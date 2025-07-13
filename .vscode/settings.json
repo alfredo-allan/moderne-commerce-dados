@@ -1,0 +1,8 @@
+{
+    "files.exclude": {
+        "**/.flaskenv": true
+    },
+    "files.associations": {
+        ".flaskenv": "dotenv"
+    }
+}

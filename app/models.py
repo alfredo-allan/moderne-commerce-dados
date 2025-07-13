@@ -1,11 +1,11 @@
-# app/models.py
 from .extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime
+from sqlalchemy import Integer, String, Float, DateTime, Column, ForeignKey, JSON
 
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    tipo_pessoa = db.Column(db.String(10), nullable=False)  # 'fisica' ou 'juridica'
+    tipo_pessoa = db.Column(db.String(10), nullable=False)
     nome = db.Column(db.String(120), nullable=False)
     telefone = db.Column(db.String(20))
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -27,3 +27,33 @@ class Cliente(db.Model):
 
     def __repr__(self):
         return f"<Cliente {self.nome} ({self.tipo_pessoa})>"
+
+
+class ShippingCalculation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cep_destino = db.Column(db.String(9), nullable=False)
+    valor = db.Column(db.Float, nullable=False)
+    prazo_entrega = db.Column(db.String(50))
+    servico = db.Column(db.String(100))
+    data_calculo = db.Column(db.DateTime, default=datetime.utcnow)
+    usuario = db.Column(db.String(100))
+
+
+class Payment(db.Model):
+    __tablename__ = "payments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
+    order_id = db.Column(db.Integer, nullable=False)
+    mercado_pago_id = db.Column(db.String(255), nullable=True)
+    status = db.Column(db.String(50), nullable=True)
+    amount = db.Column(db.Float, nullable=False)
+    payment_method = db.Column(db.String(100), nullable=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_approved = db.Column(db.DateTime, nullable=True)
+    transaction_details = db.Column(db.JSON, nullable=True)
+
+    cliente = db.relationship("Cliente", backref=db.backref("payments", lazy=True))
+
+    def __repr__(self):
+        return f"<Payment {self.id} - Order {self.order_id} - Status {self.status}>"

@@ -141,3 +141,32 @@ def delete_client(client_id):
     db.session.delete(cliente)
     db.session.commit()
     return jsonify({"message": "Cliente deletado com sucesso!"}), 200
+
+
+# Nova rota para obter todos os clientes
+@clients_bp.route("/secret_list_client", methods=["GET"])
+def get_all_clients():
+    clientes = Cliente.query.all()  # Busca todos os clientes no banco de dados
+    lista_de_clientes = []
+    for cliente in clientes:
+        # Cria uma lista de dicionários, onde cada dicionário representa um cliente
+        lista_de_clientes.append(
+            {
+                "id": cliente.id,
+                "tipo_pessoa": cliente.tipo_pessoa,
+                "nome": cliente.nome,
+                "telefone": cliente.telefone,
+                "email": cliente.email,
+                "cpf": cliente.cpf,
+                "cnpj": cliente.cnpj,
+                "razao_social": cliente.razao_social,
+                "endereco": {
+                    "cep": cliente.cep,
+                    "rua": cliente.rua,
+                    "numero": cliente.numero,
+                    "bairro": cliente.bairro,
+                    "cidade": cliente.cidade,
+                },
+            }
+        )
+    return jsonify(lista_de_clientes), 200  # Retorna a lista como JSON
